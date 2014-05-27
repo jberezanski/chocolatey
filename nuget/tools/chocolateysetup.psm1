@@ -89,9 +89,8 @@ param(
 )
   $environmentTarget = [System.EnvironmentVariableTarget]::User
   $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-  $UACEnabled = Get-UACEnabled
-  if ($currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) -and !$UACEnabled) {
-    Write-Debug "Administrator installing with UAC disabled so using Machine environment variable target instead of User."
+  if ($currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Debug "Administrator installing so using Machine environment variable target instead of User."
     $environmentTarget = [System.EnvironmentVariableTarget]::Machine
   }
     Write-Host "Creating $chocInstallVariableName as an Environment variable (targeting `'$environmentTarget`') and setting it to `'$folder`'"
@@ -156,9 +155,8 @@ param(
 
   $environmentTarget = [System.EnvironmentVariableTarget]::User
   $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-  $UACEnabled = Get-UACEnabled
-  if ($currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) -and !$UACEnabled) {
-    Write-Debug "Administrator installing with UAC disabled so using Machine environment variable target instead of User."
+  if ($currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Debug "Administrator installing so using Machine environment variable target instead of User."
     $environmentTarget = [System.EnvironmentVariableTarget]::Machine
   }
 
