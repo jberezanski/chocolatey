@@ -23,8 +23,7 @@ param(
 
     if ($pathType -eq [System.EnvironmentVariableTarget]::Machine) {
       $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-      $UACEnabled = Get-UACEnabled
-      if ($currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) -and !$UACEnabled) {
+      if ($currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
         [Environment]::SetEnvironmentVariable('Path', $actualPath, $pathType)
       } else {
         $psArgs = "[Environment]::SetEnvironmentVariable('Path',`'$actualPath`', `'$pathType`')"
