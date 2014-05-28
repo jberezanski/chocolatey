@@ -81,6 +81,7 @@ You can call chocolatey from anywhere, command line or powershell by typing choc
 Run choco /? for a list of functions.
 You may need to shut down and restart powershell and/or consoles first prior to using chocolatey.
 "@ | write-host
+'Machine','User','Process' | % { Write-Host "$chocInstallVariableName at $($_) level: $([Environment]::GetEnvironmentVariable($chocInstallVariableName, $_))" }
 }
 
 function Set-ChocolateyInstallFolder {
@@ -96,9 +97,11 @@ param(
   }
     Write-Host "Creating $chocInstallVariableName as an Environment variable (targeting `'$environmentTarget`') and setting it to `'$folder`'"
     Install-ChocolateyEnvironmentVariable -variableName "$chocInstallVariableName" -variableValue "$folder" -variableType $environmentTarget
+'Machine','User','Process' | % { Write-Host "$chocInstallVariableName at $($_) level: $([Environment]::GetEnvironmentVariable($chocInstallVariableName, $_))" }
 }
 
 function Get-ChocolateyInstallFolder(){
+'Machine','User','Process' | % { Write-Host "$chocInstallVariableName at $($_) level: $([Environment]::GetEnvironmentVariable($chocInstallVariableName, $_))" }
   [Environment]::GetEnvironmentVariable($chocInstallVariableName)
 }
 
