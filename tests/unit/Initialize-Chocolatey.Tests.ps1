@@ -168,6 +168,9 @@ function Setup-ChocolateyInstallationPackage
 }
 
 Describe "Initialize-Chocolatey" {
+	# note: the specs below are correct when installing with administrative permissions with UAC enabled
+	# the test suite is always run elevated, so no easy way to test limited user install for now
+
 	Context "When installing with `$Env:ChocolateyInstall set at Machine scope" {
 		Setup-ChocolateyInstallationPackage
 	
