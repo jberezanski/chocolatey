@@ -101,6 +101,34 @@ function Remove-DirectoryFromPath($directory)
 	}
 }
 
+function Add-DirectoryToPath($directory, $scope)
+{
+	$curPath = [Environment]::GetEnvironmentVariable('PATH', $scope)
+	$newPath = ($curPath -split ';' | Where-Object { $_.TrimEnd('\') -ne $directory.TrimEnd('\') }) -join ';'
+	if ($newPath -ne $curPath) {
+		Write-Debug "Directory $directory is already on PATH at $scope scope"
+	} else {
+		Write-Debug "Adding directory $directory to PATH at $scope scope"
+		if ([String]::IsNullOrEmpty($newPath)) {
+			[Environment]::SetEnvironmentVariable('PATH', $directory, $scope)
+		} else {
+			[Environment]::SetEnvironmentVariable('PATH', "$($newPath.TrimEnd(';'));$directory", $scope)
+		}
+	}
+	if ($scope -ne 'Process') {
+		$curPath = [Environment]::GetEnvironmentVariable('PATH', 'Process')
+		$newPath = ($curPath -split ';' | Where-Object { $_.TrimEnd('\') -ne $directory.TrimEnd('\') }) -join ';'
+		if ($newPath -eq $curPath) {
+			Write-Debug "Adding directory $directory to PATH at Process scope"
+			if ([String]::IsNullOrEmpty($newPath)) {
+				[Environment]::SetEnvironmentVariable('PATH', $directory, 'Process')
+			} else {
+				[Environment]::SetEnvironmentVariable('PATH', "$($newPath.TrimEnd(';'));$directory", 'Process')
+			}
+		}
+	}
+}
+
 function Add-EnvironmentVariable($name, $value, $targetScope)
 {
 	Write-Debug "Setting $name to $value at $targetScope scope"
@@ -379,13 +407,65 @@ Describe "Initialize-Chocolatey" {
 			It "should add bin to PATH at Process scope" {
 				Assert-OnPath $binDir 'Process'
 			}
-			
+
+			It "should not add bin to PATH at User scope" {
+				Assert-NotOnPath $binDir 'User'
+			}
+
 			It "should add bin to PATH at Machine scope" {
 				Assert-OnPath $binDir 'Machine'
 			}
-			
+		}
+	}
+
+	Context "When installing with bin directory on PATH at Machine scope" {
+		Setup-ChocolateyInstallationPackage
+
+		Execute-WithEnvironmentBackup {
+			Setup-ChocolateyInstall $installDir 'User'
+			Remove-DirectoryFromPath "$installDir\bin"
+			Add-DirectoryToPath "$installDir\bin" 'Machine'
+
+			Initialize-Chocolatey
+
+			$binDir = "$installDir\bin"
+
+			It "should retain bin on PATH at Process scope" {
+				Assert-OnPath $binDir 'Process'
+			}
+
 			It "should not add bin to PATH at User scope" {
 				Assert-NotOnPath $binDir 'User'
+			}
+
+			It "should retain bin on PATH at Machine scope" {
+				Assert-OnPath $binDir 'Machine'
+			}
+		}
+	}
+
+	Context "When installing with bin directory on PATH at User scope" {
+		Setup-ChocolateyInstallationPackage
+
+		Execute-WithEnvironmentBackup {
+			Setup-ChocolateyInstall $installDir 'User'
+			Remove-DirectoryFromPath "$installDir\bin"
+			Add-DirectoryToPath "$installDir\bin" 'User'
+
+			Initialize-Chocolatey
+
+			$binDir = "$installDir\bin"
+
+			It "should retain bin on PATH at Process scope" {
+				Assert-OnPath $binDir 'Process'
+			}
+
+			It "should retain bin on PATH at User scope" {
+				Assert-OnPath $binDir 'User'
+			}
+
+			It "should not add bin to PATH at Machine scope" {
+				Assert-NotOnPath $binDir 'Machine'
 			}
 		}
 	}
