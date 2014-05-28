@@ -165,7 +165,9 @@ param(
     $environmentTarget = [System.EnvironmentVariableTarget]::Machine
   }
 
+'Machine','User','Process' | % { Write-Host "PATH at $($_) level: $([Environment]::GetEnvironmentVariable('PATH', $_))" }
   Install-ChocolateyPath -pathToInstall "$chocolateyExePath" -pathType $environmentTarget
+'Machine','User','Process' | % { Write-Host "PATH at $($_) level: $([Environment]::GetEnvironmentVariable('PATH', $_))" }
 }
 
 function Process-ChocolateyBinFiles {
