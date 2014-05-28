@@ -41,9 +41,7 @@ param(
   if($alreadyInitializedNugetPath -and $alreadyInitializedNugetPath -ne $chocolateyPath){
     $chocolateyPath = $alreadyInitializedNugetPath
   }
-  else {
-    Set-ChocolateyInstallFolder $chocolateyPath
-  }
+  Set-ChocolateyInstallFolder $chocolateyPath
   Create-DirectoryIfNotExists $chocolateyPath
 
   #set up variables to add
@@ -94,8 +92,11 @@ param(
     Write-Debug "Administrator installing so using Machine environment variable target instead of User."
     $environmentTarget = [System.EnvironmentVariableTarget]::Machine
   }
+  $currentValueAtTargetScope = [Environment]::GetEnvironmentVariable($chocInstallVariableName, $environmentTarget)
+  if ($currentValueAtTargetScope -ne $folder) {
     Write-Host "Creating $chocInstallVariableName as an Environment variable (targeting `'$environmentTarget`') and setting it to `'$folder`'"
     Install-ChocolateyEnvironmentVariable -variableName "$chocInstallVariableName" -variableValue "$folder" -variableType $environmentTarget
+  }
 'Machine','User','Process' | % { Write-Host "$chocInstallVariableName at $($_) level: $([Environment]::GetEnvironmentVariable($chocInstallVariableName, $_))" }
 }
 
