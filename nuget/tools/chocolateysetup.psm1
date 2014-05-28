@@ -87,15 +87,21 @@ param(
   [string]$folder
 )
   $environmentTarget = [System.EnvironmentVariableTarget]::User
+  $environmentTargetToClear = $null
   $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
   if ($currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     Write-Debug "Administrator installing so using Machine environment variable target instead of User."
     $environmentTarget = [System.EnvironmentVariableTarget]::Machine
+    $environmentTargetToClear = [System.EnvironmentVariableTarget]::User
   }
   $currentValueAtTargetScope = [Environment]::GetEnvironmentVariable($chocInstallVariableName, $environmentTarget)
   if ($currentValueAtTargetScope -ne $folder) {
     Write-Host "Creating $chocInstallVariableName as an Environment variable (targeting `'$environmentTarget`') and setting it to `'$folder`'"
     Install-ChocolateyEnvironmentVariable -variableName "$chocInstallVariableName" -variableValue "$folder" -variableType $environmentTarget
+  }
+  if ($environmentTargetToClear -ne $null -and [Environment]::GetEnvironmentVariable($chocInstallVariableName, $environmentTargetToClear) -ne $null) {
+    Write-Host "Removing $chocInstallVariableName environment variable from `'$environmentTargetToClear`' scope, because it is set at `'$environmentTarget`' scope"
+    [System.Environment]::SetEnvironmentVariable($chocInstallVariableName, $null, $environmentTargetToClear)
   }
 'Machine','User','Process' | % { Write-Host "$chocInstallVariableName at $($_) level: $([Environment]::GetEnvironmentVariable($chocInstallVariableName, $_))" }
 }
