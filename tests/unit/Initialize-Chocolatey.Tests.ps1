@@ -101,12 +101,34 @@ function Remove-DirectoryFromPath($directory)
 	}
 }
 
-function Setup-ChocolateyInstall($path, $scope)
+function Add-EnvironmentVariable($name, $value, $targetScope)
+{
+	Write-Debug "Setting $name to $value at $targetScope scope"
+	[Environment]::SetEnvironmentVariable($name, $value, $targetScope)
+	if ($targetScope -eq 'Process') {
+		Write-Debug "Current $name value is '$value' (from Process scope)"
+		return
+	}
+	# find lowest scope with $name set and use that value as current
+	foreach ($currentScope in @('User', 'Machine')) {
+		$valueAtCurrentScope = [Environment]::GetEnvironmentVariable($name, $currentScope)
+		if ($valueAtCurrentScope -ne $null) {
+			Write-Debug "Current $name value is '$valueAtCurrentScope' (from $currentScope scope)"
+			[Environment]::SetEnvironmentVariable($name, $valueAtCurrentScope, 'Process')
+			break
+		}
+	}
+}
+
+function Add-ChocolateyInstall($path, $targetScope)
+{
+	Add-EnvironmentVariable 'ChocolateyInstall' $path $targetScope
+}
+
+function Setup-ChocolateyInstall($path, $targetScope)
 {
 	Remove-EnvironmentVariable 'ChocolateyInstall'
-	Write-Debug "Setting ChocolateyInstall to $installDir at Machine scope"
-	[Environment]::SetEnvironmentVariable('ChocolateyInstall', $installDir, 'Machine')
-	$Env:ChocolateyInstall = $installDir
+	Add-ChocolateyInstall $path $targetScope
 }
 
 function Verify-ExpectedContentInstalled($installDir)
