@@ -150,17 +150,17 @@ function Verify-ExpectedContentInstalled($installDir)
 	}
 }
 
-function Assert-InPath($directory, $pathScope)
+function Assert-OnPath($directory, $pathScope)
 {
 	$path = [Environment]::GetEnvironmentVariable('PATH', $pathScope)
-	$dirInPath = [Environment]::GetEnvironmentVariable('PATH', 'Machine') -split ';' | Where-Object { $_ -eq $directory }
+	$dirInPath = [Environment]::GetEnvironmentVariable('PATH', $pathScope) -split ';' | Where-Object { $_ -eq $directory }
 	"$dirInPath" | Should not BeNullOrEmpty
 }
 
-function Assert-NotInPath($directory, $pathScope)
+function Assert-NotOnPath($directory, $pathScope)
 {
 	$path = [Environment]::GetEnvironmentVariable('PATH', $pathScope)
-	$dirInPath = [Environment]::GetEnvironmentVariable('PATH', 'Machine') -split ';' | Where-Object { $_ -eq $directory }
+	$dirInPath = [Environment]::GetEnvironmentVariable('PATH', $pathScope) -split ';' | Where-Object { $_ -eq $directory }
 	"$dirInPath" | Should BeNullOrEmpty
 }
 
@@ -246,22 +246,22 @@ Describe "Initialize-Chocolatey" {
 	
 		Execute-WithEnvironmentBackup {
 			Setup-ChocolateyInstall $installDir 'User'
-			Remove-DirectoryFromPath $installDir
+			Remove-DirectoryFromPath "$installDir\bin"
 
 			Initialize-Chocolatey
 
 			$binDir = "$installDir\bin"
-			
+
 			It "should add bin to PATH at Process scope" {
-				Assert-InPath $binDir 'Process'
+				Assert-OnPath $binDir 'Process'
 			}
 			
 			It "should add bin to PATH at Machine scope" {
-				Assert-InPath $binDir 'Machine'
+				Assert-OnPath $binDir 'Machine'
 			}
 			
 			It "should not add bin to PATH at User scope" {
-				Assert-InPath $binDir 'User'
+				Assert-NotOnPath $binDir 'User'
 			}
 		}
 	}
