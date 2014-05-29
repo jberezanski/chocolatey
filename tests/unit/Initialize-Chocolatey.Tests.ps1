@@ -711,12 +711,12 @@ Describe "Initialize-Chocolatey" {
                         Assert-ChocolateyInstallIs $installDir 'Process'
                     }
 
-                    It "should create ChocolateyInstall at User scope" {
-                        Assert-ChocolateyInstallIs $installDir 'User'
+                    It "should not create ChocolateyInstall at User scope" {
+                        Assert-ChocolateyInstallIsNull 'User'
                     }
 
-                    It "should not create ChocolateyInstall at Machine scope" {
-                        Assert-ChocolateyInstallIsNull 'Machine'
+                    It "should create ChocolateyInstall at Machine scope" {
+                        Assert-ChocolateyInstallIs $installDir 'Machine'
                     }
                 }
             }
@@ -738,12 +738,12 @@ Describe "Initialize-Chocolatey" {
                     Assert-ChocolateyInstallIs $installDir 'Process'
                 }
 
-                It "should create ChocolateyInstall at User scope" {
-                    Assert-ChocolateyInstallIs $installDir 'User'
+                It "should not ChocolateyInstall at User scope" {
+                    Assert-ChocolateyInstallIsNull 'User'
                 }
 
-                It "should not create ChocolateyInstall at Machine scope" {
-                    Assert-ChocolateyInstallIsNull 'Machine'
+                It "should create ChocolateyInstall at Machine scope" {
+                    Assert-ChocolateyInstallIs $installDir 'Machine'
                 }
             }
         }
@@ -764,13 +764,13 @@ Describe "Initialize-Chocolatey" {
                     Assert-ChocolateyInstallIs $installDir 'Process'
                 }
 
-                # this is unexpected - different behavior than both when chocolateyPath is not passed and when passed chocolateyPath is different than environment
-                It "should create ChocolateyInstall at User scope" {
-                    Assert-ChocolateyInstallIs $installDir 'User'
+                It "should not create ChocolateyInstall at User scope" {
+                    Assert-ChocolateyInstallIsNull 'User'
                 }
 
-                It "should not create ChocolateyInstall at Machine scope" {
-                    Assert-ChocolateyInstallIsNull 'Machine'
+                # this is unexpected - different behavior than both when chocolateyPath is not passed and when passed chocolateyPath is different than environment
+                It "should create ChocolateyInstall at Machine scope" {
+                    Assert-ChocolateyInstallIs $installDir 'Machine'
                 }
             }
         }
@@ -1005,12 +1005,12 @@ Describe "Initialize-Chocolatey" {
                     Assert-OnPath $binDir 'Process'
                 }
 
-                It "should add bin to PATH at User scope" {
-                    Assert-OnPath $binDir 'User'
+                It "should not add bin to PATH at User scope" {
+                    Assert-NotOnPath $binDir 'User'
                 }
 
-                It "should not add bin to PATH at Machine scope" {
-                    Assert-NotOnPath $binDir 'Machine'
+                It "should add bin to PATH at Machine scope" {
+                    Assert-OnPath $binDir 'Machine'
                 }
             }
         }
