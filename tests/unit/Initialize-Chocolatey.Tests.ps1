@@ -408,12 +408,12 @@ Describe "Initialize-Chocolatey" {
 				Assert-OnPath $binDir 'Process'
 			}
 
-			It "should add bin to PATH at User scope" {
-				Assert-OnPath $binDir 'User'
+			It "should not add bin to PATH at User scope" {
+				Assert-NotOnPath $binDir 'User'
 			}
 
-			It "should not add bin to PATH at Machine scope" {
-				Assert-NotOnPath $binDir 'Machine'
+			It "should add bin to PATH at Machine scope" {
+				Assert-OnPath $binDir 'Machine'
 			}
 		}
 	}
