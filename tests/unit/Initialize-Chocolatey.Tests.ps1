@@ -263,8 +263,8 @@ Describe "Initialize-Chocolatey" {
 				Assert-ChocolateyInstallIs $installDir 'User'
 			}
 
-			It "should not create ChocolateyInstall at Machine scope" {
-				Assert-ChocolateyInstallIsNull 'Machine'
+			It "should create ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIs $installDir 'Machine'
 			}
 		}
 	}
@@ -287,8 +287,8 @@ Describe "Initialize-Chocolatey" {
 				Assert-ChocolateyInstallIsNull 'User'
 			}
 
-			It "should not create ChocolateyInstall at Machine scope" {
-				Assert-ChocolateyInstallIsNull 'Machine'
+			It "should create ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIs $installDir 'Machine'
 			}
 		}
 	}
@@ -337,8 +337,8 @@ Describe "Initialize-Chocolatey" {
 				Assert-ChocolateyInstallIs $installDir 'User'
 			}
 
-			It "should preserve value of ChocolateyInstall at Machine scope" {
-				Assert-ChocolateyInstallIs 'X:\nonexistent' 'Machine'
+			It "should update value of ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIs $installDir 'Machine'
 			}
 		}
 	}
@@ -362,8 +362,8 @@ Describe "Initialize-Chocolatey" {
 				Assert-ChocolateyInstallIsNull 'User'
 			}
 
-			It "should preserve value of ChocolateyInstall at Machine scope" {
-				Assert-ChocolateyInstallIs 'X:\nonexistent' 'Machine'
+			It "should update value of ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIs $installDir 'Machine'
 			}
 		}
 	}
@@ -387,8 +387,8 @@ Describe "Initialize-Chocolatey" {
 				Assert-ChocolateyInstallIs 'X:\nonexistent' 'User'
 			}
 
-			It "should not create ChocolateyInstall at Machine scope" {
-				Assert-ChocolateyInstallIsNull 'Machine'
+			It "should create ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIs $installDir 'Machine'
 			}
 		}
 	}
