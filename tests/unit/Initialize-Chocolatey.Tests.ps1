@@ -259,8 +259,8 @@ Describe "Initialize-Chocolatey" {
 				Assert-ChocolateyInstallIs $installDir 'Process'
 			}
 
-			It "should preserve value of ChocolateyInstall at User scope" {
-				Assert-ChocolateyInstallIs $installDir 'User'
+			It "should remove ChocolateyInstall from User scope" {
+				Assert-ChocolateyInstallIsNull 'User'
 			}
 
 			It "should create ChocolateyInstall at Machine scope" {
@@ -308,8 +308,8 @@ Describe "Initialize-Chocolatey" {
 				Assert-ChocolateyInstallIs $installDir 'Process'
 			}
 
-			It "should preserve value of ChocolateyInstall at User scope" {
-				Assert-ChocolateyInstallIs $installDir 'User'
+			It "should remove ChocolateyInstall from User scope" {
+				Assert-ChocolateyInstallIsNull 'User'
 			}
 
 			It "should preserve value of ChocolateyInstall at Machine scope" {
@@ -333,8 +333,8 @@ Describe "Initialize-Chocolatey" {
 				Assert-ChocolateyInstallIs $installDir 'Process'
 			}
 
-			It "should preserve value of ChocolateyInstall at User scope" {
-				Assert-ChocolateyInstallIs $installDir 'User'
+			It "should remove ChocolateyInstall from User scope" {
+				Assert-ChocolateyInstallIsNull 'User'
 			}
 
 			It "should update value of ChocolateyInstall at Machine scope" {
@@ -383,8 +383,8 @@ Describe "Initialize-Chocolatey" {
 				Assert-ChocolateyInstallIs $installDir 'Process'
 			}
 
-			It "should preserve value of ChocolateyInstall at User scope" {
-				Assert-ChocolateyInstallIs 'X:\nonexistent' 'User'
+			It "should remove ChocolateyInstall from User scope" {
+				Assert-ChocolateyInstallIsNull 'User'
 			}
 
 			It "should create ChocolateyInstall at Machine scope" {
