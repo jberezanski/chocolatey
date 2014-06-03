@@ -18,6 +18,13 @@ System.Boolean
 
 #>
 
+  if (Test-Path Variable:\ChocolateyTestsMockAdminRights) {
+    Write-Verbose "Test-AdminRights: returning mocked value $ChocolateyTestsMockAdminRights"
+    return $ChocolateyTestsMockAdminRights
+  }
+
   $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-  return $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+  $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+  Write-Verbose "Test-AdminRights: returning actual value $isAdmin"
+  return $isAdmin
 }
