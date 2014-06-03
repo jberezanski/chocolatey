@@ -1018,4 +1018,253 @@ Describe "Initialize-Chocolatey" {
             }
 		}
 	}
+
+	Context "When installing as simulated standard user with `$Env:ChocolateyInstall set at Machine scope" {
+		Setup-ChocolateyInstallationPackage
+	
+		Execute-WithEnvironmentBackup {
+			Setup-ChocolateyInstall $installDir 'Machine'
+
+			Execute-AsMockedNonAdmin { Initialize-Chocolatey }
+			
+			Verify-ExpectedContentInstalled $installDir
+			
+			It "should preserve value of ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
+			
+			It "should not create ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIsNull 'User'
+			}
+
+			It "should preserve value of ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIs $installDir 'Machine'
+			}
+		}
+	}
+
+	Context "When installing as simulated standard user with `$Env:ChocolateyInstall set at User scope" {
+		Setup-ChocolateyInstallationPackage
+
+		Execute-WithEnvironmentBackup {
+			Setup-ChocolateyInstall $installDir 'User'
+
+			Execute-AsMockedNonAdmin { Initialize-Chocolatey }
+
+			Verify-ExpectedContentInstalled $installDir
+
+			It "should preserve value of ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
+
+			It "should preserve value of ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIs $installDir 'User'
+			}
+
+			It "should not create ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIsNull 'Machine'
+			}
+		}
+	}
+
+	Context "When installing as simulated standard user with `$Env:ChocolateyInstall set at Process scope" {
+		Setup-ChocolateyInstallationPackage
+	
+		Execute-WithEnvironmentBackup {
+			Setup-ChocolateyInstall $installDir 'Process'
+
+			Execute-AsMockedNonAdmin { Initialize-Chocolatey }
+			
+			Verify-ExpectedContentInstalled $installDir
+			
+			It "should preserve value of ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
+			
+			It "should not create ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIsNull 'User'
+			}
+
+			It "should not create ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIsNull 'Machine'
+			}
+		}
+	}
+
+	Context "When installing as simulated standard user with `$Env:ChocolateyInstall set at Machine scope and same at User scope" {
+		Setup-ChocolateyInstallationPackage
+
+		Execute-WithEnvironmentBackup {
+			Setup-ChocolateyInstall $installDir 'Machine'
+			Add-ChocolateyInstall $installDir 'User'
+
+			Execute-AsMockedNonAdmin { Initialize-Chocolatey }
+
+			Verify-ExpectedContentInstalled $installDir
+
+			It "should preserve value of ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
+
+			It "should preserve value of ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIs $installDir 'User'
+			}
+
+			It "should preserve value of ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIs $installDir 'Machine'
+			}
+		}
+	}
+
+	Context "When installing as simulated standard user with `$Env:ChocolateyInstall set at Machine scope and different at User scope" {
+		Setup-ChocolateyInstallationPackage
+
+		Execute-WithEnvironmentBackup {
+			Setup-ChocolateyInstall 'X:\nonexistent' 'Machine'
+			Add-ChocolateyInstall $installDir 'User'
+
+			Execute-AsMockedNonAdmin { Initialize-Chocolatey }
+
+			Verify-ExpectedContentInstalled $installDir
+
+			It "should preserve value of ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
+
+			It "should preserve value of ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIs $installDir 'User'
+			}
+
+			It "should preserve value of ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIs 'X:\nonexistent' 'Machine'
+			}
+		}
+	}
+
+	Context "When installing as simulated standard user with `$Env:ChocolateyInstall set at Machine scope and different at Process scope" {
+		Setup-ChocolateyInstallationPackage
+
+		Execute-WithEnvironmentBackup {
+			Setup-ChocolateyInstall 'X:\nonexistent' 'Machine'
+			Add-ChocolateyInstall $installDir 'Process'
+
+			Execute-AsMockedNonAdmin { Initialize-Chocolatey }
+
+			Verify-ExpectedContentInstalled $installDir
+
+			It "should preserve value of ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
+
+			It "should not create ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIsNull 'User'
+			}
+
+			It "should preserve value of ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIs 'X:\nonexistent' 'Machine'
+			}
+		}
+	}
+
+	Context "When installing as simulated standard user with `$Env:ChocolateyInstall set at User scope and different at Process scope" {
+		Setup-ChocolateyInstallationPackage
+
+		Execute-WithEnvironmentBackup {
+			Setup-ChocolateyInstall 'X:\nonexistent' 'User'
+			Add-ChocolateyInstall $installDir 'Process'
+
+			Execute-AsMockedNonAdmin { Initialize-Chocolatey }
+
+			Verify-ExpectedContentInstalled $installDir
+
+			It "should preserve value of ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
+
+			It "should preserve value of ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIs 'X:\nonexistent' 'User'
+			}
+
+			It "should not create ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIsNull 'Machine'
+			}
+		}
+	}
+
+	Context "When installing as simulated standard user with bin directory not on PATH" {
+		Setup-ChocolateyInstallationPackage
+
+		Execute-WithEnvironmentBackup {
+			Setup-ChocolateyInstall $installDir 'User'
+			Remove-DirectoryFromPath "$installDir\bin"
+
+			Execute-AsMockedNonAdmin { Initialize-Chocolatey }
+
+			$binDir = "$installDir\bin"
+
+			It "should add bin to PATH at Process scope" {
+				Assert-OnPath $binDir 'Process'
+			}
+
+			It "should add bin to PATH at User scope" {
+				Assert-OnPath $binDir 'User'
+			}
+
+			It "should not add bin to PATH at Machine scope" {
+				Assert-NotOnPath $binDir 'Machine'
+			}
+		}
+	}
+
+	Context "When installing as simulated standard user with bin directory on PATH at Machine scope" {
+		Setup-ChocolateyInstallationPackage
+
+		Execute-WithEnvironmentBackup {
+			Setup-ChocolateyInstall $installDir 'User'
+			Remove-DirectoryFromPath "$installDir\bin"
+			Add-DirectoryToPath "$installDir\bin" 'Machine'
+
+			Execute-AsMockedNonAdmin { Initialize-Chocolatey }
+
+			$binDir = "$installDir\bin"
+
+			It "should retain bin on PATH at Process scope" {
+				Assert-OnPath $binDir 'Process'
+			}
+
+			It "should not add bin to PATH at User scope" {
+				Assert-NotOnPath $binDir 'User'
+			}
+
+			It "should retain bin on PATH at Machine scope" {
+				Assert-OnPath $binDir 'Machine'
+			}
+		}
+	}
+
+	Context "When installing as simulated standard user with bin directory on PATH at User scope" {
+		Setup-ChocolateyInstallationPackage
+
+		Execute-WithEnvironmentBackup {
+			Setup-ChocolateyInstall $installDir 'User'
+			Remove-DirectoryFromPath "$installDir\bin"
+			Add-DirectoryToPath "$installDir\bin" 'User'
+
+			Execute-AsMockedNonAdmin { Initialize-Chocolatey }
+
+			$binDir = "$installDir\bin"
+
+			It "should retain bin on PATH at Process scope" {
+				Assert-OnPath $binDir 'Process'
+			}
+
+			It "should retain bin on PATH at User scope" {
+				Assert-OnPath $binDir 'User'
+			}
+
+			It "should not add bin to PATH at Machine scope" {
+				Assert-NotOnPath $binDir 'Machine'
+			}
+		}
+	}
 }
