@@ -58,6 +58,19 @@ function Execute-WithMockingUAC([string]$status, $scriptBlock)
     }
 }
 
+function Execute-AsMockedNonAdmin($scriptBlock)
+{
+    $global:ChocolateyTestsMockAdminRights = $false
+    try
+    {
+        & $scriptBlock
+    }
+    finally
+    {
+        Remove-Variable ChocolateyTestsMockAdminRights -scope global
+    }
+}
+
 function Add-ChocolateyInstall($path, $targetScope)
 {
     Add-EnvironmentVariable 'ChocolateyInstall' $path $targetScope
@@ -142,8 +155,8 @@ function Execute-ChocolateyInstallationInDefaultDir($scriptBlock)
 }
 
 Describe "Initialize-Chocolatey" {
-    # note: the specs below are correct when installing with administrative permissions
-    # the test suite is always run elevated, so no easy way to test limited user install for now
+    # note: the correctness of the specs below is dependent upon all code using Test-AdminRights
+    # the test suite is always run elevated, so the only way to test limited user install is to mock that function
 
     Context "When installing as admin, without UAC, with `$Env:ChocolateyInstall not set and no arguments" {
         Setup-ChocolateyInstallationPackage
