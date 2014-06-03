@@ -88,9 +88,8 @@ param(
   [string]$folder
 )
   $environmentTarget = [System.EnvironmentVariableTarget]::User
-  $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
   $UACEnabled = Get-UACEnabled
-  if ($currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) -and !$UACEnabled) {
+  if ((Test-AdminRights) -and !$UACEnabled) {
     Write-Debug "Administrator installing with UAC disabled so using Machine environment variable target instead of User."
     $environmentTarget = [System.EnvironmentVariableTarget]::Machine
   }
@@ -155,9 +154,8 @@ param(
 )
 
   $environmentTarget = [System.EnvironmentVariableTarget]::User
-  $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
   $UACEnabled = Get-UACEnabled
-  if ($currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) -and !$UACEnabled) {
+  if ((Test-AdminRights) -and !$UACEnabled) {
     Write-Debug "Administrator installing with UAC disabled so using Machine environment variable target instead of User."
     $environmentTarget = [System.EnvironmentVariableTarget]::Machine
   }
