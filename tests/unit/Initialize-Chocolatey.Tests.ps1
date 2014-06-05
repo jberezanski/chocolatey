@@ -991,34 +991,6 @@ Describe "Initialize-Chocolatey" {
 		}
 	}
 
-	Context "When installing as admin, with UAC, with bin directory on PATH at User scope" {
-		Setup-ChocolateyInstallationPackage
-
-		Execute-WithEnvironmentBackup {
-			Setup-ChocolateyInstall $installDir 'User'
-			Remove-DirectoryFromPath "$installDir\bin"
-			Add-DirectoryToPath "$installDir\bin" 'User'
-
-			Execute-WithMockingUAC Enabled {
-                Initialize-Chocolatey
-
-			    $binDir = "$installDir\bin"
-
-			    It "should retain bin on PATH at Process scope" {
-				    Assert-OnPath $binDir 'Process'
-			    }
-
-			    It "should retain bin on PATH at User scope" {
-				    Assert-OnPath $binDir 'User'
-			    }
-
-			    It "should not add bin to PATH at Machine scope" {
-				    Assert-NotOnPath $binDir 'Machine'
-			    }
-            }
-		}
-	}
-
 	Context "When installing as simulated standard user, with `$Env:ChocolateyInstall not set, with explicit chocolateyPath" {
 		Setup-ChocolateyInstallationPackage
 
