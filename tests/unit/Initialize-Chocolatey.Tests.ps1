@@ -1019,6 +1019,86 @@ Describe "Initialize-Chocolatey" {
 		}
 	}
 
+	Context "When installing as simulated standard user, with `$Env:ChocolateyInstall not set, with explicit chocolateyPath" {
+		Setup-ChocolateyInstallationPackage
+
+		Execute-WithEnvironmentBackup {
+			Setup-ChocolateyInstall $null
+
+			Execute-AsMockedNonAdmin {
+			    Initialize-Chocolatey -chocolateyPath $installDir
+
+			    Verify-ExpectedContentInstalled $installDir
+
+			    It "should create ChocolateyInstall at Process scope" {
+				    Assert-ChocolateyInstallIs $installDir 'Process'
+			    }
+
+			    It "should not create ChocolateyInstall at User scope" {
+				    Assert-ChocolateyInstallIsNull 'User'
+			    }
+
+			    It "should create ChocolateyInstall at Machine scope" {
+				    Assert-ChocolateyInstallIs $installDir 'Machine'
+			    }
+            }
+		}
+	}
+
+	Context "When installing as simulated standard user, with `$Env:ChocolateyInstall set at Process scope, with same explicit chocolateyPath" {
+		Setup-ChocolateyInstallationPackage
+
+		Execute-WithEnvironmentBackup {
+			Setup-ChocolateyInstall $installDir 'Process'
+
+			Execute-AsMockedNonAdmin {
+			    Initialize-Chocolatey -chocolateyPath $installDir
+
+			    Verify-ExpectedContentInstalled $installDir
+
+			    It "should preserve value of ChocolateyInstall at Process scope" {
+				    Assert-ChocolateyInstallIs $installDir 'Process'
+			    }
+
+			    It "should not create ChocolateyInstall at User scope" {
+				    Assert-ChocolateyInstallIsNull 'User'
+			    }
+
+                # this is unexpected - different behavior than both when chocolateyPath is not passed and when passed chocolateyPath is different than environment
+			    It "should create ChocolateyInstall at Machine scope" {
+				    Assert-ChocolateyInstallIs $installDir 'Machine'
+			    }
+            }
+		}
+	}
+
+	Context "When installing as simulated standard user, with `$Env:ChocolateyInstall set at Process scope, with different explicit chocolateyPath" {
+		Setup-ChocolateyInstallationPackage
+
+		Execute-WithEnvironmentBackup {
+			Setup-ChocolateyInstall $installDir 'Process'
+
+			Execute-AsMockedNonAdmin {
+			    Initialize-Chocolatey -chocolateyPath 'X:\nonexistent'
+
+                # Is this really desired behavior - giving precedence to environment over explicit argument?
+			    Verify-ExpectedContentInstalled $installDir
+
+			    It "should preserve value of ChocolateyInstall at Process scope" {
+				    Assert-ChocolateyInstallIs $installDir 'Process'
+			    }
+
+			    It "should not create ChocolateyInstall at User scope" {
+				    Assert-ChocolateyInstallIsNull 'User'
+			    }
+
+			    It "should not create ChocolateyInstall at Machine scope" {
+				    Assert-ChocolateyInstallIsNull 'Machine'
+			    }
+            }
+		}
+	}
+
 	Context "When installing as simulated standard user with `$Env:ChocolateyInstall set at Machine scope" {
 		Setup-ChocolateyInstallationPackage
 	
