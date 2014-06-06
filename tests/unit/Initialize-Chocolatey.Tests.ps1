@@ -236,278 +236,278 @@ Describe "Initialize-Chocolatey" {
 	# note: the correctness of the specs below is dependent upon all code using Test-AdminRights
 	# the test suite is always run elevated, so the only way to test limited user install is to mock that function
 
-	Context "When installing as admin, with UAC, with `$Env:ChocolateyInstall not set, with explicit chocolateyPath" {
+	Context "When installing as admin, with `$Env:ChocolateyInstall not set, with explicit chocolateyPath" {
 		Setup-ChocolateyInstallationPackage
 
 		Execute-WithEnvironmentBackup {
 			Setup-ChocolateyInstall $null
 
-			    Initialize-Chocolatey -chocolateyPath $installDir
+			Initialize-Chocolatey -chocolateyPath $installDir
 
-			    Verify-ExpectedContentInstalled $installDir
+			Verify-ExpectedContentInstalled $installDir
 
-			    It "should create ChocolateyInstall at Process scope" {
-				    Assert-ChocolateyInstallIs $installDir 'Process'
-			    }
+			It "should create ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
 
-			    It "should not ChocolateyInstall at User scope" {
-				    Assert-ChocolateyInstallIsNull 'User'
-			    }
+			It "should not ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIsNull 'User'
+			}
 
-			    It "should create ChocolateyInstall at Machine scope" {
-				    Assert-ChocolateyInstallIs $installDir 'Machine'
-			    }
+			It "should create ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIs $installDir 'Machine'
+			}
 		}
 	}
 
-	Context "When installing as admin, with UAC, with `$Env:ChocolateyInstall set at Process scope, with same explicit chocolateyPath" {
+	Context "When installing as admin, with `$Env:ChocolateyInstall set at Process scope, with same explicit chocolateyPath" {
 		Setup-ChocolateyInstallationPackage
 
 		Execute-WithEnvironmentBackup {
 			Setup-ChocolateyInstall $installDir 'Process'
 
-			    Initialize-Chocolatey -chocolateyPath $installDir
+			Initialize-Chocolatey -chocolateyPath $installDir
 
-			    Verify-ExpectedContentInstalled $installDir
+			Verify-ExpectedContentInstalled $installDir
 
-			    It "should preserve value of ChocolateyInstall at Process scope" {
-				    Assert-ChocolateyInstallIs $installDir 'Process'
-			    }
+			It "should preserve value of ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
 
-			    It "should not create ChocolateyInstall at User scope" {
-				    Assert-ChocolateyInstallIsNull 'User'
-			    }
+			It "should not create ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIsNull 'User'
+			}
 
-                # this is unexpected - different behavior than both when chocolateyPath is not passed and when passed chocolateyPath is different than environment
-			    It "should create ChocolateyInstall at Machine scope" {
-				    Assert-ChocolateyInstallIs $installDir 'Machine'
-			    }
+            # this is unexpected - different behavior than both when chocolateyPath is not passed and when passed chocolateyPath is different than environment
+			It "should create ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIs $installDir 'Machine'
+			}
 		}
 	}
 
-	Context "When installing as admin, with UAC, with `$Env:ChocolateyInstall set at Process scope, with different explicit chocolateyPath" {
+	Context "When installing as admin, with `$Env:ChocolateyInstall set at Process scope, with different explicit chocolateyPath" {
 		Setup-ChocolateyInstallationPackage
 
 		Execute-WithEnvironmentBackup {
 			Setup-ChocolateyInstall $installDir 'Process'
 
-			    Initialize-Chocolatey -chocolateyPath 'X:\nonexistent'
+			Initialize-Chocolatey -chocolateyPath 'X:\nonexistent'
 
-                # Is this really desired behavior - giving precedence to environment over explicit argument?
-			    Verify-ExpectedContentInstalled $installDir
+            # Is this really desired behavior - giving precedence to environment over explicit argument?
+			Verify-ExpectedContentInstalled $installDir
 
-			    It "should preserve value of ChocolateyInstall at Process scope" {
-				    Assert-ChocolateyInstallIs $installDir 'Process'
-			    }
+			It "should preserve value of ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
 
-			    It "should not create ChocolateyInstall at User scope" {
-				    Assert-ChocolateyInstallIsNull 'User'
-			    }
+			It "should not create ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIsNull 'User'
+			}
 
-			    It "should not create ChocolateyInstall at Machine scope" {
-				    Assert-ChocolateyInstallIsNull 'Machine'
-			    }
+			It "should not create ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIsNull 'Machine'
+			}
 		}
 	}
 
-	Context "When installing as admin, with UAC, with `$Env:ChocolateyInstall set at Machine scope" {
+	Context "When installing as admin with `$Env:ChocolateyInstall set at Machine scope" {
 		Setup-ChocolateyInstallationPackage
 
 		Execute-WithEnvironmentBackup {
 			Setup-ChocolateyInstall $installDir 'Machine'
 
-			    Initialize-Chocolatey
+			Initialize-Chocolatey
 
-			    Verify-ExpectedContentInstalled $installDir
+			Verify-ExpectedContentInstalled $installDir
 
-			    It "should preserve value of ChocolateyInstall at Process scope" {
-				    Assert-ChocolateyInstallIs $installDir 'Process'
-			    }
+			It "should preserve value of ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
 
-			    It "should not create ChocolateyInstall at User scope" {
-				    Assert-ChocolateyInstallIsNull 'User'
-			    }
+			It "should not create ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIsNull 'User'
+			}
 
-			    It "should preserve value of ChocolateyInstall at Machine scope" {
-				    Assert-ChocolateyInstallIs $installDir 'Machine'
-			    }
+			It "should preserve value of ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIs $installDir 'Machine'
+			}
 		}
 	}
 
-	Context "When installing as admin, with UAC, with `$Env:ChocolateyInstall set at User scope" {
+	Context "When installing as admin with `$Env:ChocolateyInstall set at User scope" {
 		Setup-ChocolateyInstallationPackage
 
 		Execute-WithEnvironmentBackup {
 			Setup-ChocolateyInstall $installDir 'User'
 
-			    Initialize-Chocolatey
+			Initialize-Chocolatey
 
-			    Verify-ExpectedContentInstalled $installDir
+			Verify-ExpectedContentInstalled $installDir
 
-			    It "should preserve value of ChocolateyInstall at Process scope" {
-				    Assert-ChocolateyInstallIs $installDir 'Process'
-			    }
+			It "should preserve value of ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
 
-			    It "should preserve value of ChocolateyInstall at User scope" {
-				    Assert-ChocolateyInstallIs $installDir 'User'
-			    }
+			It "should preserve value of ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIs $installDir 'User'
+			}
 
-			    It "should not create ChocolateyInstall at Machine scope" {
-				    Assert-ChocolateyInstallIsNull 'Machine'
-			    }
+			It "should not create ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIsNull 'Machine'
+			}
 		}
 	}
 
-	Context "When installing as admin, with UAC, with `$Env:ChocolateyInstall set at Process scope" {
+	Context "When installing as admin with `$Env:ChocolateyInstall set at Process scope" {
 		Setup-ChocolateyInstallationPackage
 
 		Execute-WithEnvironmentBackup {
 			Setup-ChocolateyInstall $installDir 'Process'
 
-			    Initialize-Chocolatey
+			Initialize-Chocolatey
 
-			    Verify-ExpectedContentInstalled $installDir
+			Verify-ExpectedContentInstalled $installDir
 
-			    It "should preserve value of ChocolateyInstall at Process scope" {
-				    Assert-ChocolateyInstallIs $installDir 'Process'
-			    }
+			It "should preserve value of ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
 
-			    It "should not create ChocolateyInstall at User scope" {
-				    Assert-ChocolateyInstallIsNull 'User'
-			    }
+			It "should not create ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIsNull 'User'
+			}
 
-			    It "should not create ChocolateyInstall at Machine scope" {
-				    Assert-ChocolateyInstallIsNull 'Machine'
-			    }
+			It "should not create ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIsNull 'Machine'
+			}
 		}
 	}
 
-	Context "When installing as admin, with UAC, with `$Env:ChocolateyInstall set at Machine scope and same at User scope" {
+	Context "When installing as admin with `$Env:ChocolateyInstall set at Machine scope and same at User scope" {
 		Setup-ChocolateyInstallationPackage
 
 		Execute-WithEnvironmentBackup {
 			Setup-ChocolateyInstall $installDir 'Machine'
 			Add-ChocolateyInstall $installDir 'User'
 
-			    Initialize-Chocolatey
+			Initialize-Chocolatey
 
-			    Verify-ExpectedContentInstalled $installDir
+			Verify-ExpectedContentInstalled $installDir
 
-			    It "should preserve value of ChocolateyInstall at Process scope" {
-				    Assert-ChocolateyInstallIs $installDir 'Process'
-			    }
+			It "should preserve value of ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
 
-			    It "should preserve value of ChocolateyInstall at User scope" {
-				    Assert-ChocolateyInstallIs $installDir 'User'
-			    }
+			It "should preserve value of ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIs $installDir 'User'
+			}
 
-			    It "should preserve value of ChocolateyInstall at Machine scope" {
-				    Assert-ChocolateyInstallIs $installDir 'Machine'
-			    }
+			It "should preserve value of ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIs $installDir 'Machine'
+			}
 		}
 	}
 
-	Context "When installing as admin, with UAC, with `$Env:ChocolateyInstall set at Machine scope and different at User scope" {
+	Context "When installing as admin with `$Env:ChocolateyInstall set at Machine scope and different at User scope" {
 		Setup-ChocolateyInstallationPackage
 
 		Execute-WithEnvironmentBackup {
 			Setup-ChocolateyInstall 'X:\nonexistent' 'Machine'
 			Add-ChocolateyInstall $installDir 'User'
 
-			    Initialize-Chocolatey
+			Initialize-Chocolatey
 
-			    Verify-ExpectedContentInstalled $installDir
+			Verify-ExpectedContentInstalled $installDir
 
-			    It "should preserve value of ChocolateyInstall at Process scope" {
-				    Assert-ChocolateyInstallIs $installDir 'Process'
-			    }
+			It "should preserve value of ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
 
-			    It "should preserve value of ChocolateyInstall at User scope" {
-				    Assert-ChocolateyInstallIs $installDir 'User'
-			    }
+			It "should preserve value of ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIs $installDir 'User'
+			}
 
-			    It "should preserve value of ChocolateyInstall at Machine scope" {
-				    Assert-ChocolateyInstallIs 'X:\nonexistent' 'Machine'
-			    }
+			It "should preserve value of ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIs 'X:\nonexistent' 'Machine'
+			}
 		}
 	}
 
-	Context "When installing as admin, with UAC, with `$Env:ChocolateyInstall set at Machine scope and different at Process scope" {
+	Context "When installing as admin with `$Env:ChocolateyInstall set at Machine scope and different at Process scope" {
 		Setup-ChocolateyInstallationPackage
 
 		Execute-WithEnvironmentBackup {
 			Setup-ChocolateyInstall 'X:\nonexistent' 'Machine'
 			Add-ChocolateyInstall $installDir 'Process'
 
-			    Initialize-Chocolatey
+			Initialize-Chocolatey
 
-			    Verify-ExpectedContentInstalled $installDir
+			Verify-ExpectedContentInstalled $installDir
 
-			    It "should preserve value of ChocolateyInstall at Process scope" {
-				    Assert-ChocolateyInstallIs $installDir 'Process'
-			    }
+			It "should preserve value of ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
 
-			    It "should not create ChocolateyInstall at User scope" {
-				    Assert-ChocolateyInstallIsNull 'User'
-			    }
+			It "should not create ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIsNull 'User'
+			}
 
-			    It "should preserve value of ChocolateyInstall at Machine scope" {
-				    Assert-ChocolateyInstallIs 'X:\nonexistent' 'Machine'
-			    }
+			It "should preserve value of ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIs 'X:\nonexistent' 'Machine'
+			}
 		}
 	}
 
-	Context "When installing as admin, with UAC, with `$Env:ChocolateyInstall set at User scope and different at Process scope" {
+	Context "When installing as admin with `$Env:ChocolateyInstall set at User scope and different at Process scope" {
 		Setup-ChocolateyInstallationPackage
 
 		Execute-WithEnvironmentBackup {
 			Setup-ChocolateyInstall 'X:\nonexistent' 'User'
 			Add-ChocolateyInstall $installDir 'Process'
 
-			    Initialize-Chocolatey
+			Initialize-Chocolatey
 
-			    Verify-ExpectedContentInstalled $installDir
+			Verify-ExpectedContentInstalled $installDir
 
-			    It "should preserve value of ChocolateyInstall at Process scope" {
-				    Assert-ChocolateyInstallIs $installDir 'Process'
-			    }
+			It "should preserve value of ChocolateyInstall at Process scope" {
+				Assert-ChocolateyInstallIs $installDir 'Process'
+			}
 
-			    It "should preserve value of ChocolateyInstall at User scope" {
-				    Assert-ChocolateyInstallIs 'X:\nonexistent' 'User'
-			    }
+			It "should preserve value of ChocolateyInstall at User scope" {
+				Assert-ChocolateyInstallIs 'X:\nonexistent' 'User'
+			}
 
-			    It "should not create ChocolateyInstall at Machine scope" {
-				    Assert-ChocolateyInstallIsNull 'Machine'
-			    }
+			It "should not create ChocolateyInstall at Machine scope" {
+				Assert-ChocolateyInstallIsNull 'Machine'
+			}
 		}
 	}
 
-	Context "When installing as admin, with UAC, with bin directory not on PATH" {
+	Context "When installing as admin with bin directory not on PATH" {
 		Setup-ChocolateyInstallationPackage
 
 		Execute-WithEnvironmentBackup {
 			Setup-ChocolateyInstall $installDir 'User'
 			Remove-DirectoryFromPath "$installDir\bin"
 
-			    Initialize-Chocolatey
+			Initialize-Chocolatey
 
-			    $binDir = "$installDir\bin"
+			$binDir = "$installDir\bin"
 
-			    It "should add bin to PATH at Process scope" {
-				    Assert-OnPath $binDir 'Process'
-			    }
+			It "should add bin to PATH at Process scope" {
+				Assert-OnPath $binDir 'Process'
+			}
 
-			    It "should not add bin to PATH at User scope" {
-				    Assert-NotOnPath $binDir 'User'
-			    }
+			It "should not add bin to PATH at User scope" {
+				Assert-NotOnPath $binDir 'User'
+			}
 
-			    It "should add bin to PATH at Machine scope" {
-				    Assert-OnPath $binDir 'Machine'
-			    }
+			It "should add bin to PATH at Machine scope" {
+				Assert-OnPath $binDir 'Machine'
+			}
 		}
 	}
 
-	Context "When installing as admin, with UAC, with bin directory on PATH at Machine scope" {
+	Context "When installing as admin with bin directory on PATH at Machine scope" {
 		Setup-ChocolateyInstallationPackage
 
 		Execute-WithEnvironmentBackup {
@@ -515,25 +515,25 @@ Describe "Initialize-Chocolatey" {
 			Remove-DirectoryFromPath "$installDir\bin"
 			Add-DirectoryToPath "$installDir\bin" 'Machine'
 
-			    Initialize-Chocolatey
+			Initialize-Chocolatey
 
-			    $binDir = "$installDir\bin"
+			$binDir = "$installDir\bin"
 
-			    It "should retain bin on PATH at Process scope" {
-				    Assert-OnPath $binDir 'Process'
-			    }
+			It "should retain bin on PATH at Process scope" {
+				Assert-OnPath $binDir 'Process'
+			}
 
-			    It "should not add bin to PATH at User scope" {
-				    Assert-NotOnPath $binDir 'User'
-			    }
+			It "should not add bin to PATH at User scope" {
+				Assert-NotOnPath $binDir 'User'
+			}
 
-			    It "should retain bin on PATH at Machine scope" {
-				    Assert-OnPath $binDir 'Machine'
-			    }
+			It "should retain bin on PATH at Machine scope" {
+				Assert-OnPath $binDir 'Machine'
+			}
 		}
 	}
 
-	Context "When installing as admin, with UAC, with bin directory on PATH at User scope" {
+	Context "When installing as admin with bin directory on PATH at User scope" {
 		Setup-ChocolateyInstallationPackage
 
 		Execute-WithEnvironmentBackup {
@@ -541,21 +541,21 @@ Describe "Initialize-Chocolatey" {
 			Remove-DirectoryFromPath "$installDir\bin"
 			Add-DirectoryToPath "$installDir\bin" 'User'
 
-                Initialize-Chocolatey
+            Initialize-Chocolatey
 
-			    $binDir = "$installDir\bin"
+			$binDir = "$installDir\bin"
 
-			    It "should retain bin on PATH at Process scope" {
-				    Assert-OnPath $binDir 'Process'
-			    }
+			It "should retain bin on PATH at Process scope" {
+				Assert-OnPath $binDir 'Process'
+			}
 
-			    It "should retain bin on PATH at User scope" {
-				    Assert-OnPath $binDir 'User'
-			    }
+			It "should retain bin on PATH at User scope" {
+				Assert-OnPath $binDir 'User'
+			}
 
-			    It "should not add bin to PATH at Machine scope" {
-				    Assert-NotOnPath $binDir 'Machine'
-			    }
+			It "should not add bin to PATH at Machine scope" {
+				Assert-NotOnPath $binDir 'Machine'
+			}
 		}
 	}
 
