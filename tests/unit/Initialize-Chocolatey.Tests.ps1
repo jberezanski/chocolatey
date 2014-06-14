@@ -63,8 +63,8 @@ function Setup-ChocolateyInstallationPackage
     Setup -Dir 'chocotmp\chocolateyInstall'
     $script:tmpDir = 'TestDrive:\chocotmp'
 
-    Get-ChildItem "$base\nuget\tools" | Copy-Item -Destination $tmpDir -Recurse -Force
-    Get-ChildItem "$base\src" | Copy-Item -Destination "$tmpDir\chocolateyInstall" -Recurse -Force
+    Get-ChildItem "$base\nuget\tools" | Copy-Item -Destination $script:tmpDir -Recurse -Force
+    Get-ChildItem "$base\src" | Copy-Item -Destination "$script:tmpDir\chocolateyInstall" -Recurse -Force
 
     $script:installDir = Join-Path (Resolve-Path 'TestDrive:\').ProviderPath chocoinstall
 
