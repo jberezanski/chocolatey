@@ -4,6 +4,7 @@ param(
   [System.EnvironmentVariableTarget] $pathType = [System.EnvironmentVariableTarget]::User
 )
   Write-Debug "Running 'Install-ChocolateyPath' with pathToInstall:`'$pathToInstall`'";
+  $originalPathToInstall = $pathToInstall
 
   #get the PATH variable
   $envPath = $env:PATH
@@ -24,7 +25,7 @@ param(
       if (Test-AdminRights) {
         Set-EnvironmentVariable -Name 'Path' -Value $actualPath -Scope $pathType
       } else {
-        $psArgs = "Install-ChocolateyPath -pathToInstall `'$pathToInstall`' -pathType `'$pathType`'"
+        $psArgs = "Install-ChocolateyPath -pathToInstall `'$originalPathToInstall`' -pathType `'$pathType`'"
         Start-ChocolateyProcessAsAdmin "$psArgs"
       }
     } else {
