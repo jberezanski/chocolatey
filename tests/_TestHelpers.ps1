@@ -69,13 +69,25 @@ function Setup-EnvironmentMockup
     $global:ChocolateyTestEnvironmentVariables = Get-EnvironmentSnapshot
 }
 
+function Cleanup-EnvironmentMockup
+{
+    $global:ChocolateyTestEnvironmentVariables = $null
+}
+
 function Execute-WithEnvironmentProtection($scriptBlock)
 {
     $savedEnvironment = Get-EnvironmentSnapshot
     try
     {
         Setup-EnvironmentMockup
-        & $scriptBlock
+        try
+        {
+            & $scriptBlock
+        }
+        finally
+        {
+            Cleanup-EnvironmentMockup
+        }
     }
     finally
     {

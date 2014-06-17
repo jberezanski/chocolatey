@@ -1,7 +1,7 @@
 function Set-EnvironmentVariable([string] $Name, [string] $Value, [System.EnvironmentVariableTarget] $Scope) {
     Write-Verbose "Mocked Set-EnvironmentVariable scope: $Scope name: $Name value: $Value"
     if ($global:ChocolateyTestEnvironmentVariables -eq $null) {
-        throw 'Environment mocking has not been set up. Please use Setup-EnvironmentMockup or Execute-WithEnvironmentProtection.'
+        throw 'Environment mocking has not been set up. Please use Execute-WithEnvironmentProtection.'
     }
 
     switch ($Scope) {
