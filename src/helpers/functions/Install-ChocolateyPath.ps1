@@ -22,7 +22,7 @@ param(
     $actualPath = $actualPath + $pathToInstall
 
     if ($pathType -eq [System.EnvironmentVariableTarget]::Machine) {
-      if (Test-AdminRights) {
+      if (Test-ProcessAdminRights) {
         Set-EnvironmentVariable -Name 'Path' -Value $actualPath -Scope $pathType
       } else {
         $psArgs = "Install-ChocolateyPath -pathToInstall `'$originalPathToInstall`' -pathType `'$pathType`'"

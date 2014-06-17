@@ -41,7 +41,7 @@ param(
   Write-Debug "Running 'Install-ChocolateyEnvironmentVariable' with variableName:`'$variableName`' and variableValue:`'$variableValue`'";
 
   if ($variableType -eq [System.EnvironmentVariableTarget]::Machine) {
-    if (Test-AdminRights) {
+    if (Test-ProcessAdminRights) {
       Set-EnvironmentVariable -Name $variableName -Value $variableValue -Scope $variableType
     } else {
       $psArgs = "Install-ChocolateyEnvironmentVariable -variableName `'$variableName`' -variableValue `'$variableValue`' -variableType `'$variableType`'"

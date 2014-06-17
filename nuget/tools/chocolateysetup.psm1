@@ -88,7 +88,7 @@ param(
   [string]$folder
 )
   $environmentTarget = [System.EnvironmentVariableTarget]::User
-  if (Test-AdminRights) {
+  if (Test-ProcessAdminRights) {
     Write-Debug "Administrator installing so using Machine environment variable target instead of User."
     $environmentTarget = [System.EnvironmentVariableTarget]::Machine
   }
@@ -153,7 +153,7 @@ param(
 )
 
   $environmentTarget = [System.EnvironmentVariableTarget]::User
-  if (Test-AdminRights) {
+  if (Test-ProcessAdminRights) {
     Write-Debug "Administrator installing so using Machine environment variable target instead of User."
     $environmentTarget = [System.EnvironmentVariableTarget]::Machine
   }
