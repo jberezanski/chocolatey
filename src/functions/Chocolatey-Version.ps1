@@ -30,7 +30,7 @@ param(
   }
 
   $versionFound = ''
-  $versionsObj = New-Object –typename PSObject
+  $versionsObj = New-Object -typename PSObject
   foreach ($package in $packages.GetEnumerator()) {
     $packageName = $package.Name
     if ($packageName -eq '') { continue }
@@ -66,18 +66,18 @@ param(
       }
 
       $versions = @{name=$($package.Name); latest = $versionLatest; found = $versionFound; latestCompare = $versionLatestCompare; foundCompare = $versionFoundCompare; verMessage = $verMessage}
-      $versionsObj = New-Object –typename PSObject -Property $versions
+      $versionsObj = New-Object -typename PSObject -Property $versions
       $versionsObj
     } else {
       $versions = @{name=$($package.Name); found = $versionFound}
-      $versionsObj = New-Object –typename PSObject -Property $versions
+      $versionsObj = New-Object -typename PSObject -Property $versions
       $versionsObj
     }
   }
 
   # exit error 1 if querying a single package, it is not installed, and not called from another function (ie cup)
   $commandType=((Get-Variable -Name MyInvocation -Scope 1 -ValueOnly).MyCommand).CommandType
-  if ($packages.Count -eq 1 -and $versionFound -eq '' -and $commandType -ne 'Function') {
+  if (($packages | Measure-Object).Count -eq 1 -and $versionFound -eq '' -and $commandType -ne 'Function') {
     throw "No package found"
   }
 }
