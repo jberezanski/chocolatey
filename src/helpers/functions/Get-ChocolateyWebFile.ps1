@@ -73,7 +73,9 @@ param(
       $checksum = $checksum64
     }
 
-    $checksumType = $checksumType64
+    if ($url32bit -ne $url64bit -and $checksumType64 -ne '') {
+      ${checksumType} = ${checksumType64}
+    }
   }
 
   $forceX86 = $env:chocolateyForceX86;
