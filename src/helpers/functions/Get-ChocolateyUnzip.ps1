@@ -43,6 +43,11 @@ param(
     $fileFullPath=join-path $fileFullPath $specificFolder
   }
 
+  # 32-bit 7za.exe would not find C:\Windows\system32\config\systemprofile\AppData\Local\Temp
+  if ([IntPtr]::Size -ne 4) {
+    $fileFullPath = $fileFullPath -ireplace ([regex]::Escape([Environment]::GetFolderPath('System'))),(Join-Path $Env:SystemRoot sysnative)
+  }
+
   Write-Debug "Running 'Get-ChocolateyUnzip' with fileFullPath:`'$fileFullPath`'', destination: `'$destination`', specificFolder: `'$specificFolder``, packageName: `'$packageName`'";
 
   if ($packageName) {
