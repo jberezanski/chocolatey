@@ -25,6 +25,7 @@ chocolatey package installs.
     % {
       $scope = $_
       Get-EnvironmentVariableNames -Scope $scope |
+        ? { -not ('USERNAME','PSModulePath','PATHEXT' -contains $_) } |
         % {
           Set-Item "Env:$($_)" -Value (Get-EnvironmentVariable -Scope $scope -Name $_)
         }
