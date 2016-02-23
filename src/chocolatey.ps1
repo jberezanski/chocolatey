@@ -119,6 +119,8 @@ The next version of Chocolatey (v0.9.9) will require -y to perform
 
 $installModule = Join-Path $nugetChocolateyPath (Join-Path 'helpers' 'chocolateyInstaller.psm1')
 Import-Module $installModule
+try
+{
 
 # grab functions from files
 Resolve-Path $nugetChocolateyPath\functions\*.ps1 |
@@ -231,6 +233,11 @@ if ($badPackages -ne '') {
  Write-Host "Command `'$command`' failed (sometimes this indicates a partial failure). Additional info/packages: $badpackages" -BackgroundColor $ErrorColor -ForegroundColor White
 }
 
+}
+finally
+{
+  Get-Module chocolateyInstaller | Remove-Module
+}
 if ($script:chocolateyErrored) {
   Write-Debug "Exiting with non-zero exit code."
   exit 1
